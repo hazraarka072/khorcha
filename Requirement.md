@@ -68,4 +68,48 @@ Users can onboard and manage their wealth data, including financial accounts, de
     - Notes (optional).
 - Transactions:
   - Automatically adjust account balances.
-  - Reflect in debt balances (mark debt as "closed" if fully repaid). 
+  - Reflect in debt balances (mark debt as "closed" if fully repaid).
+ 
+### 3. Daily Budgeting
+
+The Daily Budgeting feature allows users to manage and track their daily expenses, allocate budgets, and attach additional details such as labels and bills to each entry.
+
+#### **Key Functionalities**
+
+##### a. Adding Budget Entries
+- Users can create new budget entries specifying:
+  - **Amount Spent**: The amount for the entry.
+  - **Category**: Select or define a spending category (e.g., groceries, utilities).
+  - **Account**: Specify the account from which the expense is deducted.  
+    - Default account will be pre-selected if no account is specified.
+  - **Labels**: Add one or more descriptive labels for the entry.
+  - **Bill Upload** (optional): Attach a receipt or bill for the expense.
+
+##### b. Labels Management
+To avoid duplication and improve usability:
+- **Auto-Suggestion for Labels**:
+  - As users type in the label field, the system suggests matching existing labels.
+  - Suggestions are case-insensitive and based on string similarity.
+- **Frequently Used Labels**:
+  - A dropdown of the most frequently used labels appears for quick selection.
+- **Label Management Dashboard**:
+  - Users can:
+    - View all labels.
+    - Edit existing labels.
+    - Merge similar labels into one. All linked budget entries will be updated.
+    - Delete unused labels.
+
+##### c. Bill Uploads
+- Users can upload bills or receipts for each budget entry:
+  - Supported formats: PDF, JPG, PNG.
+  - Maximum file size: 5 MB.
+- Files are stored securely and accessible via a download link.
+
+##### d. Viewing and Filtering Budget Data
+- **Filters**:
+  - By date range.
+  - By spending account.
+  - By labels (e.g., "Groceries").
+- **Reports**:
+  - Summarize total spending by categories and labels.
+  - Include linked bills for reference.
