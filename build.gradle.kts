@@ -24,6 +24,11 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("io.micronaut:micronaut-jackson-databind")
+    implementation("io.micronaut.aws:micronaut-aws-sdk-v2")
+    implementation("software.amazon.awssdk:dynamodb-enhanced")
+    implementation(platform("software.amazon.awssdk:bom"))
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("org.mindrot:jbcrypt:0.4")
 }
 
 
