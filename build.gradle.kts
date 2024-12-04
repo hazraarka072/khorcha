@@ -26,7 +26,6 @@ dependencies {
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut.aws:micronaut-aws-sdk-v2")
     implementation("software.amazon.awssdk:dynamodb-enhanced")
-    implementation("io.micronaut.aws:micronaut-aws-sdk-v2")
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("org.mindrot:jbcrypt:0.4")
 }
