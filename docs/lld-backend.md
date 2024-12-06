@@ -188,14 +188,14 @@ This document outlines a low-level design for implementing a **Wealth Management
 ### Database Design
 
 - **Users Table**:
-    - `user_id` (Primary Key)
+    - `username` (Primary Key)
     - `email`
     - `phone_number`
     - `password_hash`
     - `status` (active/inactive)
 
 - **Accounts Table**:
-    - `account_id` (Primary Key)
+    - `username` (Primary Key)
     - `user_id` (Foreign Key)
     - `account_name`
     - `account_type`
@@ -223,7 +223,7 @@ This document outlines a low-level design for implementing a **Wealth Management
 
 - **Budget Table**:
     - `budget_id` (Primary Key)
-    - `user_id` (Foreign Key)
+    - `username` (Foreign Key)
     - `amount_spent`
     - `category`
     - `account_id`
