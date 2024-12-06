@@ -27,7 +27,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -37,11 +37,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           }
+        },
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/lambda_function_arn1/invocations",
+          "httpMethod": "POST",
+          "type": "aws_proxy",
+          "passthroughBehavior": "WHEN_NO_MATCH"
         }
       }
     }
@@ -59,13 +65,25 @@
           }
         },
         "required": ["username", "password"]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User registered successfully"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Invalid user data"
+          }
+        }
       }
     }
-  },
-  "x-amazon-apigateway-integration": {
-    "uri": "arn:aws:lambda:eu-north-1:288761765908:function:kharcha",
-    "httpMethod": "POST",
-    "type": "aws_proxy",
-    "passthroughBehavior": "WHEN_NO_MATCH"
   }
 }

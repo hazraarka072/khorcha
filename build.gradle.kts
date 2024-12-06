@@ -26,16 +26,14 @@ dependencies {
     implementation("io.micronaut:micronaut-jackson-databind")
 }
 
-
-
 application {
     mainClass = "com.khorcha.Application"
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
-
 
 graalvmNative.toolchainDetection = false
 
@@ -60,14 +58,30 @@ micronaut {
     }
 }
 
-
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "17"
     args(
-        "-XX:MaximumHeapSizePercent=80",
-        "-Dio.netty.allocator.numDirectArenas=0",
-        "-Dio.netty.noPreferDirect=true"
+            "-XX:MaximumHeapSizePercent=80",
+            "-Dio.netty.allocator.numDirectArenas=0",
+            "-Dio.netty.noPreferDirect=true"
     )
 }
 
+//tasks.register<Zip>("zipJar") {
+//    group = "build"
+//    description = "Zips the shadow JAR file for deployment"
+//
+//    val shadowJarTask = tasks.named<Jar>("shadowJar")
+//    dependsOn(shadowJarTask)
+//
+//    // Use 'from' to specify the directory of the JAR
+//    from(shadowJarTask.map { it.archiveFile.get().asFile.parent })
+//
+//    // Use 'filesMatching' to include the specific JAR file
+//    val jarFileName = shadowJarTask.get().archiveFileName.get()
+//    include(jarFileName)
+//
+//    archiveFileName.set("deployment.zip")
+//    destinationDirectory.set(layout.buildDirectory.dir("distributions"))
+//}
 

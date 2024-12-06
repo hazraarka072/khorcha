@@ -22,7 +22,7 @@ public class RegistrationController {
     public Map<String, Object> registerUser(@Body RegistrationUser userRegistrationData){
         LOG.info("Received request for user {}",userRegistrationData);
 
-        return Collections.singletonMap("message", "Done");
+        return Collections.singletonMap("message", "Done Arka");
     }
 }
 
