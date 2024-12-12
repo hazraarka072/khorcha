@@ -19,6 +19,7 @@ on:
       action:
         description: 'Choose the Terraform action to perform: apply or destroy'
         required: true
+        type: choice
         default: 'apply'
         options:
           - apply
@@ -26,6 +27,7 @@ on:
       environment:
         description: 'Choose the environment for deployment'
         required: true
+        type: choice
         default: 'dev'
         options:
           - dev
