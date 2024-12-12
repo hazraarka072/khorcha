@@ -25,3 +25,8 @@ variable "lambda_artifact_name" {
   type = string
   default = "khorcha-0.1-all.jar"
 }
+variable "environment" {
+  description = "Environment to deploy the components for"
+  type = string
+  default = "dev"
+}

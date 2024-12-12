@@ -16,6 +16,25 @@ on:
         description: 'Lambda artifact name in github'
         required: true
         default: 'khorcha-0.1-all.jar'
+      action:
+        description: 'Choose the Terraform action to perform: apply or destroy'
+        required: true
+        default: 'apply'
+        options:
+          - apply
+          - destroy
+      environment:
+        description: 'Choose the environment for deployment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - dv0
+          - dv1
+          - dv2
+          - dv3
+          - uat
+          - prd
 
 jobs:
   terraform:
@@ -39,13 +58,19 @@ jobs:
 
       - name: Initialize Terraform
         working-directory: ./terraform
-        run: terraform init
+        run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/terraform.tfstate"
 
       - name: Plan Terraform Changes
+        if: ${{ github.event.inputs.action == 'apply' }}
         working-directory: ./terraform
-        run: terraform plan -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -out=tfplan
+        run: terraform plan -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
 
-#      - name: Apply Terraform Changes
-#        if: github.ref == 'refs/heads/main'
-#        working-directory: ./terraform
-#        run: terraform apply -auto-approve tfplan
+      - name: Apply Terraform Changes
+        if: ${{ github.event.inputs.action == 'apply' }}  && github.ref == 'refs/heads/main'
+        working-directory: ./terraform
+        run: terraform apply -auto-approve tfplan
+
+      - name: Destroy Terraform Resources
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        working-directory: ./terraform
+        run: terraform destroy -auto-approve -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -var="environment=${{ github.event.inputs.environment }}"

@@ -1,6 +1,7 @@
 
 
 # Generate a random string for resource uniqueness
+/*
 resource "random_string" "random_suffix" {
   length  = 5
   special = false
@@ -10,6 +11,7 @@ resource "random_string" "random_suffix" {
     ignore_changes = all
   }
 }
+*/
 
 resource "null_resource" "download_lambda_jar" {
   triggers = {
@@ -25,7 +27,7 @@ resource "null_resource" "download_lambda_jar" {
 # Upload JAR to S3
 resource "aws_s3_object" "lambda_jar" {
   bucket       = var.lambda_bucket_name
-  key          = "my-lambda-${random_string.random_suffix.result}.jar"
+  key          = "my-lambda-${var.environment}.jar"
   source       = "./lambda.jar"
   content_type = "application/java-archive"
   depends_on = [null_resource.download_lambda_jar]
@@ -33,7 +35,7 @@ resource "aws_s3_object" "lambda_jar" {
 
 # IAM Role for Lambda
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda-execution-role-${random_string.random_suffix.result}"
+  name = "lambda-execution-role-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -48,15 +50,12 @@ resource "aws_iam_role" "lambda_execution_role" {
     ]
   })
 
-  tags = {
-    Owner    = var.Owner
-    Instance = random_string.random_suffix.result
-  }
+  tags = local.tags
 }
 
 # IAM Policy for Lambda Role
 resource "aws_iam_role_policy" "lambda_execution_policy" {
-  name   = "lambda-policy-${random_string.random_suffix.result}"
+  name   = "lambda-policy-${var.environment}"
   role   = aws_iam_role.lambda_execution_role.id
   policy = jsonencode({
     Version = "2012-10-17",
@@ -81,7 +80,7 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
 
 # Lambda Function
 resource "aws_lambda_function" "micronaut_lambda" {
-  function_name = "micronaut-lambda-${random_string.random_suffix.result}"
+  function_name = "micronaut-lambda-${var.environment}"
   runtime       = "java17"
   handler       = "io.micronaut.function.aws.proxy.payload1.ApiGatewayProxyRequestEventFunction"
   role          = aws_iam_role.lambda_execution_role.arn
@@ -89,10 +88,7 @@ resource "aws_lambda_function" "micronaut_lambda" {
   s3_key        = aws_s3_object.lambda_jar.key
 
 
-  tags = {
-    Owner    = var.Owner
-    Instance = random_string.random_suffix.result
-  }
+  tags = local.tags
 
   depends_on = [aws_iam_role_policy.lambda_execution_policy]
 }
@@ -100,7 +96,7 @@ resource "aws_lambda_function" "micronaut_lambda" {
 
 # API Gateway using Processed Swagger
 resource "aws_api_gateway_rest_api" "micronaut_api" {
-  name = "micronaut-api-${random_string.random_suffix.result}"
+  name = "micronaut-api-${var.environment}"
   body = local.swagger_body
 
 }
@@ -108,7 +104,7 @@ resource "aws_api_gateway_rest_api" "micronaut_api" {
 # Deploy API Gateway
 resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.micronaut_api.id
-  stage_name  = "prod"
+  stage_name  = var.environment
 
 
   depends_on = [aws_api_gateway_rest_api.micronaut_api]
