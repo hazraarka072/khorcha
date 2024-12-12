@@ -15,3 +15,26 @@ variable "lambda_bucket_name" {
   default     = "kharcha-tf-state-bucket" # Adjust if needed
 
 }
+variable "release" {
+  description = "Lambda release number in github"
+  type = number
+  default = 7
+}
+variable "environment" {
+  description = "Environment to deploy the components for"
+  type = string
+  default = "dev"
+}
+variable "lambda_artifact" {
+  description = "Location for lambda artifact"
+  type = string
+  default = "./lambda.jar"
+}
+variable "lambda_timeout" {
+  type = number
+  default = 60
+}
+variable "lambda_mem_size" {
+  type = number
+  default = 512
+}

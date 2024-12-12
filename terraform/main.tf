@@ -1,6 +1,7 @@
 
 
 # Generate a random string for resource uniqueness
+/*
 resource "random_string" "random_suffix" {
   length  = 5
   special = false
@@ -10,18 +11,20 @@ resource "random_string" "random_suffix" {
     ignore_changes = all
   }
 }
+*/
 
 # Upload JAR to S3
 resource "aws_s3_object" "lambda_jar" {
   bucket       = var.lambda_bucket_name
-  key          = "my-lambda-${random_string.random_suffix.result}.jar"
-  source       = "../build/libs/khorcha-0.1-all.jar"
+  key          = local.lambda_path_in_s3
+  source       = var.lambda_artifact
   content_type = "application/java-archive"
+  source_hash = filemd5(var.lambda_artifact)
 }
 
 # IAM Role for Lambda
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda-execution-role-${random_string.random_suffix.result}"
+  name = "kharcha-lambda-role-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -36,15 +39,12 @@ resource "aws_iam_role" "lambda_execution_role" {
     ]
   })
 
-  tags = {
-    Owner    = var.Owner
-    Instance = random_string.random_suffix.result
-  }
+  tags = local.tags
 }
 
 # IAM Policy for Lambda Role
 resource "aws_iam_role_policy" "lambda_execution_policy" {
-  name   = "lambda-policy-${random_string.random_suffix.result}"
+  name   = "kharcha-lambda-primary-${var.environment}"
   role   = aws_iam_role.lambda_execution_role.id
   policy = jsonencode({
     Version = "2012-10-17",
@@ -62,6 +62,23 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
         Action = "s3:GetObject"
         Effect = "Allow"
         Resource = "arn:aws:s3:::${var.lambda_bucket_name}/*"
+      },
+      {
+        Action = [
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:PutItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:ListTables",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:UpdateItem",
+          "dynamodb:GetRecords"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
       }
     ]
   })
@@ -69,30 +86,24 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
 
 # Lambda Function
 resource "aws_lambda_function" "micronaut_lambda" {
-  function_name = "micronaut-lambda-${random_string.random_suffix.result}"
+  function_name = "kharcha-${var.environment}"
   runtime       = "java17"
   handler       = "io.micronaut.function.aws.proxy.payload1.ApiGatewayProxyRequestEventFunction"
   role          = aws_iam_role.lambda_execution_role.arn
   s3_bucket     = var.lambda_bucket_name
   s3_key        = aws_s3_object.lambda_jar.key
+  timeout       = var.lambda_timeout
+  memory_size   = var.lambda_mem_size
 
-
-  tags = {
-    Owner    = var.Owner
-    Instance = random_string.random_suffix.result
-  }
+  tags = local.tags
 
   depends_on = [aws_iam_role_policy.lambda_execution_policy]
-}
-
-locals {
-  swagger_body = replace(file("../swagger.json"), "lambda_function_arn1", aws_lambda_function.micronaut_lambda.arn)
 }
 
 
 # API Gateway using Processed Swagger
 resource "aws_api_gateway_rest_api" "micronaut_api" {
-  name = "micronaut-api-${random_string.random_suffix.result}"
+  name = "micronaut-api-${var.environment}"
   body = local.swagger_body
 
 }
@@ -100,7 +111,7 @@ resource "aws_api_gateway_rest_api" "micronaut_api" {
 # Deploy API Gateway
 resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.micronaut_api.id
-  stage_name  = "prod"
+  stage_name  = var.environment
 
 
   depends_on = [aws_api_gateway_rest_api.micronaut_api]
