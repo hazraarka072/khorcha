@@ -45,7 +45,7 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -out=tfplan
 
-      - name: Apply Terraform Changes
-        if: github.ref == 'refs/heads/main'
-        working-directory: ./terraform
-        run: terraform apply -auto-approve tfplan
+#      - name: Apply Terraform Changes
+#        if: github.ref == 'refs/heads/main'
+#        working-directory: ./terraform
+#        run: terraform apply -auto-approve tfplan
