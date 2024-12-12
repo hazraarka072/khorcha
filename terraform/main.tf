@@ -11,12 +11,24 @@ resource "random_string" "random_suffix" {
   }
 }
 
+resource "null_resource" "download_lambda_jar" {
+  triggers = {
+    on_version_change = var.release
+  }
+
+  provisioner "local-exec" {
+    command = "curl -o lambda.jar ${local.lambda_remote_url}"
+  }
+
+}
+
 # Upload JAR to S3
 resource "aws_s3_object" "lambda_jar" {
   bucket       = var.lambda_bucket_name
   key          = "my-lambda-${random_string.random_suffix.result}.jar"
-  source       = "../build/libs/khorcha-0.1-all.jar"
+  source       = "./lambda.jar"
   content_type = "application/java-archive"
+  depends_on = [null_resource.download_lambda_jar]
 }
 
 # IAM Role for Lambda
@@ -83,10 +95,6 @@ resource "aws_lambda_function" "micronaut_lambda" {
   }
 
   depends_on = [aws_iam_role_policy.lambda_execution_policy]
-}
-
-locals {
-  swagger_body = replace(file("../swagger.json"), "lambda_function_arn1", aws_lambda_function.micronaut_lambda.arn)
 }
 
 

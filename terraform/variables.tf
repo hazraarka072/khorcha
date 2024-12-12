@@ -15,3 +15,13 @@ variable "lambda_bucket_name" {
   default     = "kharcha-tf-state-bucket" # Adjust if needed
 
 }
+variable "release" {
+  description = "Lambda release number in github"
+  type = number
+  default = 7
+}
+variable "lambda_artifact_name" {
+  description = "Lambda artifact name in github"
+  type = string
+  default = "khorcha-0.1-all.jar"
+}
