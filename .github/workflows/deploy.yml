@@ -65,12 +65,19 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
 
-      - name: Apply Terraform Changes
-        if: ${{ github.event.inputs.action == 'apply' }}  && github.ref == 'refs/heads/main'
+      - name: Plan Terraform Destroy
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        working-directory: ./terraform
+        run: terraform plan -destroy -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
+
+      - name: Await Manual Approval
+        uses: peter-evans/enable-pending-status@v2
+        with:
+          status: 'pending'
+          description: 'Awaiting manual approval to implement the plan:'
+
+      - name: Execute Terraform Plan
+        if: github.ref == 'refs/heads/main'
         working-directory: ./terraform
         run: terraform apply -auto-approve tfplan
 
-      - name: Destroy Terraform Resources
-        if: ${{ github.event.inputs.action == 'destroy' }}
-        working-directory: ./terraform
-        run: terraform destroy -auto-approve -var="release=${{ github.event.inputs.release }}" -var="lambda_artifact_name=${{ github.event.inputs.lambda_artifact_name }}" -var="environment=${{ github.event.inputs.environment }}"
