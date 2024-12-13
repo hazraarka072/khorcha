@@ -11,7 +11,7 @@ resource "aws_s3_object" "lambda_jar" {
 # Lambda Function
 
 resource "aws_lambda_function" "micronaut_lambda" {
-  function_name = "kharcha-${var.environment}"
+  function_name = var.function_name
   runtime       = "java17"
   handler       = "io.micronaut.function.aws.proxy.payload1.ApiGatewayProxyRequestEventFunction"
   role          = var.role

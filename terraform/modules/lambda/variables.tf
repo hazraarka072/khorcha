@@ -1,9 +1,6 @@
 variable "lambda_bucket_name" {
   default = ""
 }
-variable "environment" {
-  default = ""
-}
 variable "lambda_timeout" {
   default = ""
 }
@@ -20,3 +17,4 @@ variable "role" {
   default = ""
 }
 variable "tags" {}
+variable "function_name" {}

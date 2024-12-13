@@ -1,6 +1,6 @@
 # API Gateway using Processed Swagger
 resource "aws_api_gateway_rest_api" "micronaut_api" {
-  name = "micronaut-api-${var.environment}"
+  name = var.name
   body = var.swagger_body
 
 }
@@ -9,4 +9,12 @@ resource "aws_api_gateway_rest_api" "micronaut_api" {
 resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.micronaut_api.id
   stage_name  = var.environment
+}
+
+resource "aws_api_gateway_authorizer" "cognito" {
+  count = var.enable_cognito ? 1 : 0
+  name          = var.name
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.micronaut_api.id
+  provider_arns = [aws_cognito_user_pool.pool[0].arn]
 }

@@ -77,10 +77,10 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
 
 module "kharcha_lambda" {
   source = "./modules/lambda"
+  function_name = "kharcha-${var.environment}"
   lambda_bucket_name = var.lambda_bucket_name
   lambda_artifact = var.lambda_artifact
   lambda_timeout = var.lambda_timeout
-  environment = var.environment
   lambda_mem_size = var.lambda_mem_size
   lambda_path_in_s3 = local.lambda_path_in_s3
   role = aws_iam_role.lambda_execution_role.arn
@@ -93,12 +93,11 @@ module "kharcha_api" {
   source = "./modules/api-gateway"
   swagger_body = local.swagger_body
   environment = var.environment
+  name = "micronaut-api-${var.environment}"
+  enable_cognito = true
+  callback_urls = ["https://localhost:3000"]
+  logout_urls = ["https://localhost:3000"]
 }
 
-# Lambda Permission for API Gateway
-
-#output "swagger_body_debug" {
-#  value = local.swagger_body
-#}
 
 
