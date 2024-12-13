@@ -1,7 +1,7 @@
 output "lambda_function_arn" {
-  value = aws_lambda_function.micronaut_lambda.arn
+  value = module.kharcha_lambda.lambda_function_arn
 }
 
 output "api_gateway_url" {
-  value = aws_api_gateway_deployment.micronaut_api_deployment.invoke_url
+  value = module.kharcha_api.api_gateway_url
 }

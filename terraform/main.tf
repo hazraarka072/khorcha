@@ -13,15 +13,6 @@ resource "random_string" "random_suffix" {
 }
 */
 
-# Upload JAR to S3
-resource "aws_s3_object" "lambda_jar" {
-  bucket       = var.lambda_bucket_name
-  key          = local.lambda_path_in_s3
-  source       = var.lambda_artifact
-  content_type = "application/java-archive"
-  source_hash = filemd5(var.lambda_artifact)
-}
-
 # IAM Role for Lambda
 resource "aws_iam_role" "lambda_execution_role" {
   name = "kharcha-lambda-role-${var.environment}"
@@ -84,37 +75,24 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
   })
 }
 
-# Lambda Function
-resource "aws_lambda_function" "micronaut_lambda" {
-  function_name = "kharcha-${var.environment}"
-  runtime       = "java17"
-  handler       = "io.micronaut.function.aws.proxy.payload1.ApiGatewayProxyRequestEventFunction"
-  role          = aws_iam_role.lambda_execution_role.arn
-  s3_bucket     = var.lambda_bucket_name
-  s3_key        = aws_s3_object.lambda_jar.key
-  timeout       = var.lambda_timeout
-  memory_size   = var.lambda_mem_size
-
+module "kharcha_lambda" {
+  source = "./modules/lambda"
+  lambda_bucket_name = var.lambda_bucket_name
+  lambda_artifact = var.lambda_artifact
+  lambda_timeout = var.lambda_timeout
+  environment = var.environment
+  lambda_mem_size = var.lambda_mem_size
+  lambda_path_in_s3 = local.lambda_path_in_s3
+  role = aws_iam_role.lambda_execution_role.arn
   tags = local.tags
 
   depends_on = [aws_iam_role_policy.lambda_execution_policy]
 }
 
-
-# API Gateway using Processed Swagger
-resource "aws_api_gateway_rest_api" "micronaut_api" {
-  name = "micronaut-api-${var.environment}"
-  body = local.swagger_body
-
-}
-
-# Deploy API Gateway
-resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
-  rest_api_id = aws_api_gateway_rest_api.micronaut_api.id
-  stage_name  = var.environment
-
-
-  depends_on = [aws_api_gateway_rest_api.micronaut_api]
+module "kharcha_api" {
+  source = "./modules/api-gateway"
+  swagger_body = local.swagger_body
+  environment = var.environment
 }
 
 # Lambda Permission for API Gateway
