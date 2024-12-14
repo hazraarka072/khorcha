@@ -22,7 +22,7 @@ resource "aws_cognito_user_pool" "pool" {
 resource "aws_cognito_user_pool_client" "this" {
   name                      = var.name
   user_pool_id              = aws_cognito_user_pool.pool.id
-
+  supported_identity_providers = ["COGNITO"]
   generate_secret           = true
   allowed_oauth_flows       = ["code"]
   allowed_oauth_scopes      = ["email", "openid"]
