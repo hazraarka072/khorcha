@@ -11,6 +11,7 @@ resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
   stage_name  = var.environment
 }
 
+/*
 resource "aws_api_gateway_authorizer" "cognito" {
   count = var.cognito_user_pool_arn == "" ? 1 : 0
   name          = var.name
@@ -18,3 +19,4 @@ resource "aws_api_gateway_authorizer" "cognito" {
   rest_api_id   = aws_api_gateway_rest_api.micronaut_api.id
   provider_arns = [var.cognito_user_pool_arn]
 }
+*/

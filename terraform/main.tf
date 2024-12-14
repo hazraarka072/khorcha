@@ -105,7 +105,6 @@ module "kharcha_api" {
   swagger_body = local.swagger_body
   environment = var.environment
   name = "micronaut-api-${var.environment}"
-  cognito_user_pool_arn = var.enable_cognito ? module.kharcha_cognito[0].cognito_user_pool_arn : ""
 }
 
 
