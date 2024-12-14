@@ -37,7 +37,7 @@ resource "aws_cognito_user_pool_client" "example" {
   user_pool_id = aws_cognito_user_pool.pool[0].id
 
   generate_secret           = false
-  allowed_oauth_flows       = ["client_credentials", "implicit"]
+  allowed_oauth_flows       = ["code"]
   allowed_oauth_scopes      = ["email", "phone", "openid"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls             = var.callback_urls # Replace with your callback URL
