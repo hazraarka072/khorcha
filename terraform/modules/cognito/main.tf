@@ -1,5 +1,4 @@
 resource "aws_cognito_user_pool" "pool" {
-  count = var.enable_cognito ? 1 : 0
   name = var.name
   username_attributes = ["email"]
 
@@ -21,9 +20,8 @@ resource "aws_cognito_user_pool" "pool" {
 
 # Create Cognito User Pool Client
 resource "aws_cognito_user_pool_client" "this" {
-  count                     = var.enable_cognito ? 1 : 0
   name                      = var.name
-  user_pool_id              = aws_cognito_user_pool.pool[0].id
+  user_pool_id              = aws_cognito_user_pool.pool.id
 
   generate_secret           = true
   allowed_oauth_flows       = ["code"]

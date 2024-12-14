@@ -19,7 +19,9 @@ resource "aws_lambda_function" "micronaut_lambda" {
   s3_key        = aws_s3_object.lambda_jar.key
   timeout       = var.lambda_timeout
   memory_size   = var.lambda_mem_size
-
+  environment {
+    variables = var.env_vars
+  }
   tags = var.tags
 }
 

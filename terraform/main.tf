@@ -75,6 +75,14 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
   })
 }
 
+module "kharcha_cognito" {
+  count = var.enable_cognito ? 1 : 0
+  source = "./modules/cognito"
+  callback_urls = ["https://localhost:3000"]
+  logout_urls = ["https://localhost:3000"]
+  name = "micronaut-${var.environment}"
+}
+
 module "kharcha_lambda" {
   source = "./modules/lambda"
   function_name = "kharcha-${var.environment}"
@@ -84,6 +92,9 @@ module "kharcha_lambda" {
   lambda_mem_size = var.lambda_mem_size
   lambda_path_in_s3 = local.lambda_path_in_s3
   role = aws_iam_role.lambda_execution_role.arn
+  env_vars = {
+    jwks_url = var.enable_cognito ? module.kharcha_cognito.jwks_url : ""
+  }
   tags = local.tags
 
   depends_on = [aws_iam_role_policy.lambda_execution_policy]
@@ -94,9 +105,7 @@ module "kharcha_api" {
   swagger_body = local.swagger_body
   environment = var.environment
   name = "micronaut-api-${var.environment}"
-  enable_cognito = var.enable_cognito
-  callback_urls = ["https://localhost:3000"]
-  logout_urls = ["https://localhost:3000"]
+  cognito_user_pool_arn = var.enable_cognito ? module.kharcha_cognito.cognito_user_pool_arn : ""
 }
 
 

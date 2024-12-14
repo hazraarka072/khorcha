@@ -12,9 +12,9 @@ resource "aws_api_gateway_deployment" "micronaut_api_deployment" {
 }
 
 resource "aws_api_gateway_authorizer" "cognito" {
-  count = var.enable_cognito ? 1 : 0
+  count = var.cognito_user_pool_arn == "" ? 1 : 0
   name          = var.name
   type          = "COGNITO_USER_POOLS"
   rest_api_id   = aws_api_gateway_rest_api.micronaut_api.id
-  provider_arns = [aws_cognito_user_pool.pool[0].arn]
+  provider_arns = [var.cognito_user_pool_arn]
 }
