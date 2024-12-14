@@ -31,10 +31,10 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 # Create Cognito User Pool Client
-resource "aws_cognito_user_pool_client" "example" {
-  count = var.enable_cognito ? 1 : 0
-  name         = "example-user-pool-client"
-  user_pool_id = aws_cognito_user_pool.pool[0].id
+resource "aws_cognito_user_pool_client" "this" {
+  count                     = var.enable_cognito ? 1 : 0
+  name                      = var.name
+  user_pool_id              = aws_cognito_user_pool.pool[0].id
 
   generate_secret           = false
   allowed_oauth_flows       = ["code"]

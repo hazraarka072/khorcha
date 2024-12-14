@@ -22,3 +22,9 @@ resource "aws_lambda_function" "micronaut_lambda" {
 
   tags = var.tags
 }
+
+resource "aws_lambda_permission" "allow_api_gateway" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.micronaut_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+}

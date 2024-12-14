@@ -94,7 +94,7 @@ module "kharcha_api" {
   swagger_body = local.swagger_body
   environment = var.environment
   name = "micronaut-api-${var.environment}"
-  enable_cognito = true
+  enable_cognito = var.enable_cognito
   callback_urls = ["https://localhost:3000"]
   logout_urls = ["https://localhost:3000"]
 }

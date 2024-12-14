@@ -16,6 +16,11 @@ on:
         description: 'Lambda artifact name in github'
         required: true
         default: 'khorcha-0.1-all.jar'
+      enable_cognito:
+        description: 'Enable Cognito as auth provider'
+        required: true
+        type: boolean
+        default: false
       action:
         description: 'Choose the Terraform action to perform: apply or destroy'
         required: true
@@ -74,12 +79,12 @@ jobs:
       - name: Plan Terraform Changes
         if: ${{ github.event.inputs.action == 'apply' }}
         working-directory: ./terraform
-        run: terraform plan -var="release=${{ github.event.inputs.release }}" -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -out=tfplan
+        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Plan Terraform Destroy
         if: ${{ github.event.inputs.action == 'destroy' }}
         working-directory: ./terraform
-        run: terraform plan -destroy -var="release=${{ github.event.inputs.release }}" -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -out=tfplan
+        run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Execute Terraform Plan
         if: github.ref == 'refs/heads/main'
