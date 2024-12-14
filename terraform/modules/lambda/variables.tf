@@ -18,3 +18,7 @@ variable "role" {
 }
 variable "tags" {}
 variable "function_name" {}
+variable "env_vars" {
+  default = {}
+  type = map(string)
+}
