@@ -10,17 +10,6 @@ resource "aws_cognito_user_pool" "pool" {
   schema {
     attribute_data_type = "String"
     mutable = true
-    name = "email"
-    required = true
-    string_attribute_constraints {
-      min_length = 1
-      max_length = 2048
-    }
-  }
-
-  schema {
-    attribute_data_type = "String"
-    mutable = true
     name = "name"
     required = true
     string_attribute_constraints {
@@ -38,7 +27,7 @@ resource "aws_cognito_user_pool_client" "this" {
 
   generate_secret           = false
   allowed_oauth_flows       = ["code"]
-  allowed_oauth_scopes      = ["email", "phone", "openid"]
+  allowed_oauth_scopes      = ["email", "name", "openid"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls             = var.callback_urls # Replace with your callback URL
   logout_urls               = var.logout_urls   # Replace with your logout URL
