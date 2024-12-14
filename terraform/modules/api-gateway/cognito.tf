@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool" "pool" {
   count = var.enable_cognito ? 1 : 0
   name = var.name
-  username_attributes = ["email",  "phone_number"]
+  username_attributes = ["email"]
 
   username_configuration {
     case_sensitive = false
@@ -27,7 +27,7 @@ resource "aws_cognito_user_pool_client" "this" {
 
   generate_secret           = false
   allowed_oauth_flows       = ["code"]
-  allowed_oauth_scopes      = ["email", "name", "openid"]
+  allowed_oauth_scopes      = ["email", "openid"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls             = var.callback_urls # Replace with your callback URL
   logout_urls               = var.logout_urls   # Replace with your logout URL
