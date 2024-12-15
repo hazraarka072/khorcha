@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    runtimeOnly("org.yaml:snakeyaml")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
@@ -28,6 +29,10 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb-enhanced")
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.security:micronaut-security-jwt")
+    implementation("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut:micronaut-http-client")
 }
 
 application {

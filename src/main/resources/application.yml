@@ -1,0 +1,13 @@
+micronaut:
+  application:
+    name: kharcha
+  security:
+    enabled: true
+    token:
+      enabled: true
+      jwt:
+        enabled: true
+        signatures:
+          jwks:
+            fusionauth:
+              url: ${jwks_uri:`https://cognito-idp.us-east-1.amazonaws.com/us-east-1_aia0ttnFy/.well-known/jwks.json`}

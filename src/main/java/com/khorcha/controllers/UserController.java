@@ -3,14 +3,15 @@ import com.khorcha.models.RegistrationUser;
 import com.khorcha.services.UsersService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Map;
+import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
 @Controller
+@Secured(IS_AUTHENTICATED)
 public class UserController {
     public static  final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
