@@ -1,6 +1,7 @@
 package com.khorcha.controllers;
 import com.khorcha.models.RegistrationUser;
 import com.khorcha.services.UsersService;
+import com.khorcha.utils.ThreadLocalEmail;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
@@ -36,6 +37,11 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }
+    }
+
+    @Get("/username")
+    public HttpResponse<String> getUserName() {
+        return HttpResponse.ok(ThreadLocalEmail.getEmail());
     }
 }
 
