@@ -4,6 +4,7 @@ resource "aws_dynamodb_table" "this" {
   hash_key                    = var.hash_key
   range_key                   = var.range_key
   deletion_protection_enabled = var.deletion_protection
+
   attribute {
     name = var.hash_key
     type = var.hash_key_type
@@ -26,20 +27,6 @@ resource "aws_dynamodb_table" "this" {
       hash_key        = lookup(global_secondary_index.value, "hash_key", null)
       range_key       = lookup(global_secondary_index.value, "range_key", null)
       projection_type = lookup(global_secondary_index.value, "projection_type", "ALL")
-
-      # Define attributes for GSIs
-      attribute {
-        name = lookup(global_secondary_index.value, "hash_key", null)
-        type = lookup(global_secondary_index.value, "hash_key_type", null)
-      }
-
-      dynamic "attribute" {
-        for_each = contains(keys(global_secondary_index.value), "range_key") && global_secondary_index.value.range_key != null ? [1] : []
-        content {
-          name = global_secondary_index.value.range_key
-          type = global_secondary_index.value.range_key_type
-        }
-      }
     }
   }
 
