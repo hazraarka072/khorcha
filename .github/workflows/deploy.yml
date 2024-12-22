@@ -1,9 +1,9 @@
-name: Deploy Terraform to AWS
+name: Deploy Stateless Infra
 
 on:
 #  push:
 #    paths:
-#      - 'terraform/**'
+#      - 'terraform/stateless/**'
 #    branches:
 #      - main
   workflow_dispatch:
@@ -64,7 +64,7 @@ jobs:
           aws-region: eu-north-1  # Replace with your AWS region
 
       - name: Initialize Terraform
-        working-directory: ./terraform
+        working-directory: ./terraform/stateless
         run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/terraform.tfstate"
 
       - name: Download artifact
@@ -78,16 +78,16 @@ jobs:
 
       - name: Plan Terraform Changes
         if: ${{ github.event.inputs.action == 'apply' }}
-        working-directory: ./terraform
+        working-directory: ./terraform/stateless
         run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Plan Terraform Destroy
         if: ${{ github.event.inputs.action == 'destroy' }}
-        working-directory: ./terraform
+        working-directory: ./terraform/stateless
         run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Execute Terraform Plan
         if: github.ref == 'refs/heads/main'
-        working-directory: ./terraform
+        working-directory: ./terraform/stateless
         run: terraform apply -auto-approve tfplan
 

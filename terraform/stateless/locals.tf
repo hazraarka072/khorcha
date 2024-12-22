@@ -1,5 +1,5 @@
 locals {
-  swagger_body = templatefile("../swagger.json.tpl", {
+  swagger_body = templatefile("../../swagger.json.tpl", {
     lambda_function_arn = module.kharcha_lambda.lambda_function_arn
   })
 
