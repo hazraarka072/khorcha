@@ -1,0 +1,93 @@
+name: Manage Stateless Infra
+
+on:
+#  push:
+#    paths:
+#      - 'terraform/stateless/**'
+#    branches:
+#      - main
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Lambda release number in github'
+        required: true
+        default: 7
+      lambda_artifact_name:
+        description: 'Lambda artifact name in github'
+        required: true
+        default: 'khorcha-0.1-all.jar'
+      enable_cognito:
+        description: 'Enable Cognito as auth provider'
+        required: true
+        type: boolean
+        default: false
+      action:
+        description: 'Choose the Terraform action to perform: apply or destroy'
+        required: true
+        type: choice
+        default: 'apply'
+        options:
+          - apply
+          - destroy
+      environment:
+        description: 'Choose the environment for deployment'
+        required: true
+        type: choice
+        default: 'dev'
+        options:
+          - dev
+          - dv0
+          - dv1
+          - dv2
+          - dv3
+          - uat
+          - prd
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.2  # Specify the version you are using
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1  # Replace with your AWS region
+
+      - name: Initialize Terraform
+        working-directory: ./terraform/stateless
+        run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/terraform.tfstate"
+
+      - name: Download artifact
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'hazraarka072/khorcha'
+          fileName: "${{ github.event.inputs.lambda_artifact_name }}"
+          tag: "${{ github.event.inputs.release }}"
+          out-file-path: './terraform'
+          preRelease: true
+
+      - name: Plan Terraform Changes
+        if: ${{ github.event.inputs.action == 'apply' }}
+        working-directory: ./terraform/stateless
+        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
+
+      - name: Plan Terraform Destroy
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        working-directory: ./terraform/stateless
+        run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
+
+      - name: Execute Terraform Plan
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./terraform/stateless
+        run: terraform apply -auto-approve tfplan
+

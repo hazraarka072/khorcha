@@ -1,26 +1,13 @@
-name: Deploy Stateless Infra
+name: Manage Stateful Infra
 
 on:
 #  push:
 #    paths:
-#      - 'terraform/stateless/**'
+#      - 'terraform/stateful/**'
 #    branches:
 #      - main
   workflow_dispatch:
     inputs:
-      release:
-        description: 'Lambda release number in github'
-        required: true
-        default: 7
-      lambda_artifact_name:
-        description: 'Lambda artifact name in github'
-        required: true
-        default: 'khorcha-0.1-all.jar'
-      enable_cognito:
-        description: 'Enable Cognito as auth provider'
-        required: true
-        type: boolean
-        default: false
       action:
         description: 'Choose the Terraform action to perform: apply or destroy'
         required: true
@@ -64,7 +51,7 @@ jobs:
           aws-region: eu-north-1  # Replace with your AWS region
 
       - name: Initialize Terraform
-        working-directory: ./terraform/stateless
+        working-directory: ./terraform/stateful
         run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/terraform.tfstate"
 
       - name: Download artifact
@@ -78,16 +65,16 @@ jobs:
 
       - name: Plan Terraform Changes
         if: ${{ github.event.inputs.action == 'apply' }}
-        working-directory: ./terraform/stateless
+        working-directory: ./terraform/stateful
         run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Plan Terraform Destroy
         if: ${{ github.event.inputs.action == 'destroy' }}
-        working-directory: ./terraform/stateless
+        working-directory: ./terraform/stateful
         run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
 
       - name: Execute Terraform Plan
         if: github.ref == 'refs/heads/main'
-        working-directory: ./terraform/stateless
+        working-directory: ./terraform/stateful
         run: terraform apply -auto-approve tfplan
 
