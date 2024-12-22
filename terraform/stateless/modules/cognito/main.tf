@@ -30,3 +30,8 @@ resource "aws_cognito_user_pool_client" "this" {
   callback_urls             = var.callback_urls # Replace with your callback URL
   logout_urls               = var.logout_urls   # Replace with your logout URL
 }
+
+resource "aws_cognito_user_pool_domain" "this" {
+  domain       = var.name
+  user_pool_id = aws_cognito_user_pool.pool.id
+}
