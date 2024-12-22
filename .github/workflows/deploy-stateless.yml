@@ -20,7 +20,7 @@ on:
         description: 'Enable Cognito as auth provider'
         required: true
         type: boolean
-        default: false
+        default: true
       action:
         description: 'Choose the Terraform action to perform: apply or destroy'
         required: true
