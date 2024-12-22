@@ -1,5 +1,5 @@
 module "dynamodb_table" {
-  source = "modules/dynomodb"
+  source = "./modules/dynomodb"
 
   table_name    = "accounts-${var.environment}"
   hash_key      = "email"

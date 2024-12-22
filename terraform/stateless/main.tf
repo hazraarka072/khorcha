@@ -77,14 +77,14 @@ resource "aws_iam_role_policy" "lambda_execution_policy" {
 
 module "kharcha_cognito" {
   count = var.enable_cognito ? 1 : 0
-  source = "modules/cognito"
+  source = "./modules/cognito"
   callback_urls = ["https://localhost:3000"]
   logout_urls = ["https://localhost:3000"]
   name = "micronaut-${var.environment}"
 }
 
 module "kharcha_lambda" {
-  source = "modules/lambda"
+  source = "./modules/lambda"
   function_name = "kharcha-${var.environment}"
   lambda_bucket_name = var.lambda_bucket_name
   lambda_artifact = var.lambda_artifact
@@ -93,7 +93,8 @@ module "kharcha_lambda" {
   lambda_path_in_s3 = local.lambda_path_in_s3
   role = aws_iam_role.lambda_execution_role.arn
   env_vars = {
-    jwks_url = var.enable_cognito ? module.kharcha_cognito[0].jwks_url : ""
+    jwks_url    = var.enable_cognito ? module.kharcha_cognito[0].jwks_url : ""
+    environment = var.environment
   }
   tags = local.tags
 
@@ -101,7 +102,7 @@ module "kharcha_lambda" {
 }
 
 module "kharcha_api" {
-  source = "modules/api-gateway"
+  source = "./modules/api-gateway"
   swagger_body = local.swagger_body
   environment = var.environment
   name = "micronaut-api-${var.environment}"

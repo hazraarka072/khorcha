@@ -1,6 +1,9 @@
 micronaut:
   application:
     name: kharcha
+  config:
+    files:
+      - classpath:tables.yml
   security:
     enabled: true
     token:
