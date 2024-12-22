@@ -1,12 +1,9 @@
 package com.khorcha.filters;
 
-import com.khorcha.utils.ThreadLocalEmail;
-import io.micronaut.core.order.Ordered;
+import com.khorcha.utils.ThreadLocalContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.annotation.RequestFilter;
-import io.micronaut.http.annotation.ServerFilter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.http.filter.ServerFilterPhase;
@@ -29,7 +26,7 @@ public class JwtEmailFilter implements HttpServerFilter {
         securityService.getAuthentication().ifPresent(authentication -> {
             String email = (String) authentication.getAttributes().get("email");
             if (email != null) {
-                ThreadLocalEmail.setEmail(email); // Store in ThreadLocal
+                ThreadLocalContext.setValue("email", email); // Store in ThreadLocal
             }
         });
 

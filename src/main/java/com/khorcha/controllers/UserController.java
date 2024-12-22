@@ -1,7 +1,7 @@
 package com.khorcha.controllers;
-import com.khorcha.models.RegistrationUser;
-import com.khorcha.services.UsersService;
-import com.khorcha.utils.ThreadLocalEmail;
+import com.khorcha.models.RegistrationAccount;
+import com.khorcha.services.AccountService;
+import com.khorcha.utils.ThreadLocalContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
@@ -17,31 +17,27 @@ public class UserController {
     public static  final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Inject
-    UsersService usersService;
+    AccountService accountService;
 
-    @Post("/register")
-    public HttpResponse<String> registerUser(@Body RegistrationUser registrationUser) {
+    @Post("/account")
+    public HttpResponse<String> registerAccount(@Body RegistrationAccount registrationAccount) {
         try {
-            usersService.registerUser(registrationUser);
-            return HttpResponse.ok("User registered successfully.");
+            accountService.registerAccount(registrationAccount);
+            return HttpResponse.ok("Account registered successfully for " + ThreadLocalContext.getValue("email"));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }
     }
 
-    @Delete("/{username}")
-    public HttpResponse<String> deleteUser(String username) {
+    @Delete("/account/{accountName}")
+    public HttpResponse<String> deleteAccount(String accountName) {
         try {
-            usersService.deleteUser(username);
-            return HttpResponse.ok("User deleted successfully.");
+            accountService.deleteAccount(accountName);
+            return HttpResponse.ok("Account deleted successfully.");
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }
     }
 
-    @Get("/username")
-    public HttpResponse<String> getUserName() {
-        return HttpResponse.ok(ThreadLocalEmail.getEmail());
-    }
 }
 
