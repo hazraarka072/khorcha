@@ -1,4 +1,4 @@
-package com.khorcha.models;
+package com.khorcha.dto;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;

@@ -1,12 +1,16 @@
 package com.khorcha.services.impl;
 
-import com.khorcha.models.RegistrationAccount;
+import com.khorcha.dto.RegistrationAccount;
 import com.khorcha.models.Account;
 import com.khorcha.repository.AccountRepository;
 import com.khorcha.services.AccountService;
-import com.khorcha.utils.Password;
 import com.khorcha.utils.ThreadLocalContext;
 import jakarta.inject.Singleton;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {
@@ -29,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
         account.setType(registrationAccount.getType());
         account.setAccountName(registrationAccount.getAccountName());
         account.setCurrentBalance(registrationAccount.getCurrentBalance());
-        account.setDescription(registrationAccount.setDescription());
+        account.setDescription(registrationAccount.getDescription());
         account.setEmail(email);
         account.setStatus("ACTIVE");
 
@@ -50,5 +54,27 @@ public class AccountServiceImpl implements AccountService {
     public void deleteAccount(String accountName) {
         String email = ThreadLocalContext.getValue("email").toString();
         accountRepository.deleteAccount(email,accountName);
+    }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        String email = ThreadLocalContext.getValue("email").toString();
+        return accountRepository.getAccounts(email);
+    }
+
+    @Override
+    public Optional<Account> getAccount(String accountName) {
+        String email = ThreadLocalContext.getValue("email").toString();
+        return accountRepository.getAccount(email, accountName);
+    }
+
+    @Override
+    public BigDecimal getAllAccountBalance() {
+        List<Account> accounts = this.getAllAccounts();
+
+        return accounts.stream()
+                .map(Account::getCurrentBalance)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

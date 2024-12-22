@@ -1,3 +1,0 @@
-dynamodb:
-  table:
-    accounts: accounts-${environment:prd}

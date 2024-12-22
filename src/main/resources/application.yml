@@ -1,9 +1,6 @@
 micronaut:
   application:
     name: kharcha
-  config:
-    files:
-      - classpath:tables.yml
   security:
     enabled: true
     token:
@@ -13,4 +10,7 @@ micronaut:
         signatures:
           jwks:
             fusionauth:
-              url: ${jwks_uri:`https://cognito-idp.us-east-1.amazonaws.com/us-east-1_aia0ttnFy/.well-known/jwks.json`}
+              url: ${jwks_uri}
+dynamodb:
+  table:
+    accounts: accounts-${environment:prd}

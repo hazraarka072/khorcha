@@ -9,9 +9,9 @@ import java.util.Optional;
 @Singleton
 public interface AccountRepository {
 
-    void saveAccount(Account user);
+    void saveAccount(Account account);
 
-    List<Account> getAccountsByEmail(String email);
+    List<Account> getAccounts(String email);
 
     void deleteAccount(String email, String accountName);
 

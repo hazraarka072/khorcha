@@ -2,6 +2,7 @@ package com.khorcha.repository.impl;
 
 import com.khorcha.models.Account;
 import com.khorcha.repository.AccountRepository;
+import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -20,12 +21,11 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     private final DynamoDbTable<Account> accountTable;
 
-    public AccountRepositoryImpl(DynamoDbClient dynamoDbClient) {
+    public AccountRepositoryImpl(DynamoDbClient dynamoDbClient, @Property(name = "dynamodb.table.accounts") String accountsTableName) {
         DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dynamoDbClient)
                 .build();
-
-        this.accountTable = enhancedClient.table("Accounts", TableSchema.fromBean(Account.class));
+        this.accountTable = enhancedClient.table(accountsTableName, TableSchema.fromBean(Account.class));
     }
 
     public void saveAccount(Account account) {
@@ -36,7 +36,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         }
     }
 
-    public List<Account> getAccountsByEmail(String email) {
+    public List<Account> getAccounts(String email) {
         try {
             QueryEnhancedRequest queryRequest = QueryEnhancedRequest.builder()
                     .queryConditional(QueryConditional.keyEqualTo(Key.builder().partitionValue(email).build()))
