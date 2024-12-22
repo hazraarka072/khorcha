@@ -1,5 +1,7 @@
 variable "aws_region" {
-  default = ""
+  description = "AWS region for resource deployment"
+  type        = string
+  default     = "us-east-1" # Adjust if needed
 }
 
 variable "Owner" {

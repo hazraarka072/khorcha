@@ -54,24 +54,15 @@ jobs:
         working-directory: ./terraform/stateful
         run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/stateful/terraform.tfstate"
 
-      - name: Download artifact
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: 'hazraarka072/khorcha'
-          fileName: "${{ github.event.inputs.lambda_artifact_name }}"
-          tag: "${{ github.event.inputs.release }}"
-          out-file-path: './terraform'
-          preRelease: true
-
       - name: Plan Terraform Changes
         if: ${{ github.event.inputs.action == 'apply' }}
         working-directory: ./terraform/stateful
-        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
+        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -var="Owner=${{ github.actor }}" -out=tfplan
 
       - name: Plan Terraform Destroy
         if: ${{ github.event.inputs.action == 'destroy' }}
         working-directory: ./terraform/stateful
-        run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="lambda_artifact=${{ github.event.inputs.lambda_artifact_name }}" -var="enable_cognito=${{ github.event.inputs.enable_cognito }}" -out=tfplan
+        run: terraform plan -destroy -var="environment=${{ github.event.inputs.environment }}" -var="Owner=${{ github.actor }}" -out=tfplan
 
       - name: Execute Terraform Plan
         if: github.ref == 'refs/heads/main'
