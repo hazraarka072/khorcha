@@ -52,7 +52,7 @@ jobs:
 
       - name: Initialize Terraform
         working-directory: ./terraform/stateful
-        run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/terraform.tfstate"
+        run: terraform init -backend-config="key=state/${{ github.event.inputs.environment }}/stateful/terraform.tfstate"
 
       - name: Download artifact
         uses: robinraju/release-downloader@v1
