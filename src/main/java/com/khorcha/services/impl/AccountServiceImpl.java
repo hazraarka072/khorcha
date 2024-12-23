@@ -41,13 +41,22 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAccount(RegistrationAccount registrationUser) {
-        /*
-        if (usersRepository.getUserByUsername(registrationUser.getUsername()).isEmpty()) {
-            throw new IllegalArgumentException("User with username " + user.getUsername() + " does not exist.");
+    public void updateAccount(RegistrationAccount registrationAccount) {
+        String email = ThreadLocalContext.getValue("email").toString();
+        if (accountRepository.getAccount(email, registrationAccount.getAccountName()).isEmpty()) {
+            throw new IllegalArgumentException("Account " + registrationAccount.getAccountName() + " does not exist.");
         }
-        usersRepository.saveUser(user);
-         */
+
+        // Transform RegistrationUser into Users
+        Account account = new Account();
+        account.setType(registrationAccount.getType());
+        account.setAccountName(registrationAccount.getAccountName());
+        account.setCurrentBalance(registrationAccount.getCurrentBalance());
+        account.setDescription(registrationAccount.getDescription());
+        account.setEmail(email);
+        account.setStatus("ACTIVE");
+
+        accountRepository.saveAccount(account);
     }
 
     @Override

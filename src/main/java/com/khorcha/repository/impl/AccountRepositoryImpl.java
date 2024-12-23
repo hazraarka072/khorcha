@@ -36,6 +36,14 @@ public class AccountRepositoryImpl implements AccountRepository {
         }
     }
 
+    public void updateAccount(Account account) {
+        try {
+            accountTable.updateItem(account);
+        } catch (DynamoDbException e) {
+            throw new RuntimeException("Failed to update account ", e);
+        }
+    }
+
     public List<Account> getAccounts(String email) {
         try {
             QueryEnhancedRequest queryRequest = QueryEnhancedRequest.builder()

@@ -66,5 +66,15 @@ public class AccountController {
             }
         }
     }
+
+    @Put("{accountName}")
+    public HttpResponse<String> updateAccount(@Body RegistrationAccount registrationAccount) {
+        try {
+            accountService.updateAccount(registrationAccount);
+            return HttpResponse.ok("Account updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return HttpResponse.badRequest(e.getMessage());
+        }
+    }
 }
 

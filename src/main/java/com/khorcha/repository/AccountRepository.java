@@ -11,6 +11,8 @@ public interface AccountRepository {
 
     void saveAccount(Account account);
 
+    void updateAccount(Account account);
+
     List<Account> getAccounts(String email);
 
     void deleteAccount(String email, String accountName);
