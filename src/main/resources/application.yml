@@ -14,3 +14,4 @@ micronaut:
 dynamodb:
   table:
     accounts: accounts-${environment:prd}
+    transactions: transactions-${environment:prd}
