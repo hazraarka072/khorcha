@@ -9,15 +9,15 @@ import java.util.Optional;
 
 public interface AccountService {
 
-    void registerAccount(RegistrationAccount registrationAccount);
+    void registerAccount(String email, RegistrationAccount registrationAccount);
 
-    void updateAccount(RegistrationAccount registrationAccount);
+    void updateAccount(String email, RegistrationAccount registrationAccount);
 
-    void deleteAccount(String accountName);
+    void deleteAccount(String email, String accountName);
 
-    BigDecimal getAllAccountBalance();
+    BigDecimal getAllAccountBalance(String email);
 
-    List<Account> getAllAccounts();
+    List<Account> getAllAccounts(String email);
 
-    Optional<Account> getAccount(String accountName);
+    Optional<Account> getAccount(String email, String accountName);
 }

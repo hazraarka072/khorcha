@@ -22,8 +22,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void registerAccount(RegistrationAccount registrationAccount) {
-        String email = ThreadLocalContext.getValue("email").toString();
+    public void registerAccount(String email, RegistrationAccount registrationAccount) {
         if (accountRepository.getAccount(email, registrationAccount.getAccountName()).isPresent()) {
             throw new IllegalArgumentException("Account " + registrationAccount.getAccountName() + " already exists.");
         }
@@ -41,8 +40,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAccount(RegistrationAccount registrationAccount) {
-        String email = ThreadLocalContext.getValue("email").toString();
+    public void updateAccount(String email, RegistrationAccount registrationAccount) {
         if (accountRepository.getAccount(email, registrationAccount.getAccountName()).isEmpty()) {
             throw new IllegalArgumentException("Account " + registrationAccount.getAccountName() + " does not exist.");
         }
@@ -60,26 +58,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(String accountName) {
-        String email = ThreadLocalContext.getValue("email").toString();
+    public void deleteAccount(String email, String accountName) {
         accountRepository.deleteAccount(email,accountName);
     }
 
     @Override
-    public List<Account> getAllAccounts() {
-        String email = ThreadLocalContext.getValue("email").toString();
+    public List<Account> getAllAccounts(String email) {
         return accountRepository.getAccounts(email);
     }
 
     @Override
-    public Optional<Account> getAccount(String accountName) {
-        String email = ThreadLocalContext.getValue("email").toString();
+    public Optional<Account> getAccount(String email, String accountName) {
         return accountRepository.getAccount(email, accountName);
     }
 
     @Override
-    public BigDecimal getAllAccountBalance() {
-        List<Account> accounts = this.getAllAccounts();
+    public BigDecimal getAllAccountBalance(String email) {
+        List<Account> accounts = this.getAllAccounts(email);
 
         return accounts.stream()
                 .map(Account::getCurrentBalance)

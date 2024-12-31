@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
-@Controller("/account")
+@Controller("/users/{email}/accounts")
 @Secured(IS_AUTHENTICATED)
 public class AccountController {
     public static  final Logger LOG = LoggerFactory.getLogger(AccountController.class);
@@ -27,9 +27,9 @@ public class AccountController {
     AccountService accountService;
 
     @Post
-    public HttpResponse<String> registerAccount(@Body RegistrationAccount registrationAccount) {
+    public HttpResponse<String> registerAccount(@PathVariable String email, @Body RegistrationAccount registrationAccount) {
         try {
-            accountService.registerAccount(registrationAccount);
+            accountService.registerAccount(email, registrationAccount);
             return HttpResponse.ok("Account registered successfully for " + ThreadLocalContext.getValue("email"));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
@@ -37,9 +37,9 @@ public class AccountController {
     }
 
     @Delete("/{accountName}")
-    public HttpResponse<String> deleteAccount(String accountName) {
+    public HttpResponse<String> deleteAccount(@PathVariable String email, String accountName) {
         try {
-            accountService.deleteAccount(accountName);
+            accountService.deleteAccount(email,accountName);
             return HttpResponse.ok("Account deleted successfully.");
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
@@ -47,17 +47,17 @@ public class AccountController {
     }
 
     @Get("/balance")
-    public HttpResponse<BalanceResponse> getBalance() {
-        BigDecimal accBal = accountService.getAllAccountBalance();
+    public HttpResponse<BalanceResponse> getBalance(@PathVariable String email) {
+        BigDecimal accBal = accountService.getAllAccountBalance(email);
         return HttpResponse.ok(new BalanceResponse(accBal));
     }
 
     @Get("/details")
-    public HttpResponse<List<Account>> getDetails(@Nullable @QueryValue String accountName) {
+    public HttpResponse<List<Account>> getDetails(@PathVariable String email, @Nullable @QueryValue String accountName) {
         if (accountName == null) {
-            return HttpResponse.ok(accountService.getAllAccounts());
+            return HttpResponse.ok(accountService.getAllAccounts(email));
         } else {
-            Optional<Account> account = accountService.getAccount(accountName);
+            Optional<Account> account = accountService.getAccount(email, accountName);
             if(account.isPresent()) {
                 return HttpResponse.ok(List.of(account.get()));
             }
@@ -68,9 +68,9 @@ public class AccountController {
     }
 
     @Put("{accountName}")
-    public HttpResponse<String> updateAccount(@Body RegistrationAccount registrationAccount) {
+    public HttpResponse<String> updateAccount(@PathVariable String email, @Body RegistrationAccount registrationAccount) {
         try {
-            accountService.updateAccount(registrationAccount);
+            accountService.updateAccount(email,registrationAccount);
             return HttpResponse.ok("Account updated successfully.");
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
