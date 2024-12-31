@@ -13,6 +13,8 @@ public interface AccountService {
 
     void updateAccount(String email, RegistrationAccount registrationAccount);
 
+    void updateAccount(Account account);
+
     void deleteAccount(String email, String accountName);
 
     BigDecimal getAllAccountBalance(String email);

@@ -4,7 +4,6 @@ import com.khorcha.dto.RegistrationAccount;
 import com.khorcha.models.Account;
 import com.khorcha.repository.AccountRepository;
 import com.khorcha.services.AccountService;
-import com.khorcha.utils.ThreadLocalContext;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
@@ -27,15 +26,7 @@ public class AccountServiceImpl implements AccountService {
             throw new IllegalArgumentException("Account " + registrationAccount.getAccountName() + " already exists.");
         }
 
-        // Transform RegistrationUser into Users
-        Account account = new Account();
-        account.setType(registrationAccount.getType());
-        account.setAccountName(registrationAccount.getAccountName());
-        account.setCurrentBalance(registrationAccount.getCurrentBalance());
-        account.setDescription(registrationAccount.getDescription());
-        account.setEmail(email);
-        account.setStatus("ACTIVE");
-
+        Account account = getAccountFromregistrationAccount(email, registrationAccount);
         accountRepository.saveAccount(account);
     }
 
@@ -44,8 +35,16 @@ public class AccountServiceImpl implements AccountService {
         if (accountRepository.getAccount(email, registrationAccount.getAccountName()).isEmpty()) {
             throw new IllegalArgumentException("Account " + registrationAccount.getAccountName() + " does not exist.");
         }
+        Account account = getAccountFromregistrationAccount(email, registrationAccount);
+        accountRepository.saveAccount(account);
+    }
 
-        // Transform RegistrationUser into Users
+    @Override
+    public void updateAccount(Account account) {
+        accountRepository.saveAccount(account);
+    }
+
+    private Account getAccountFromregistrationAccount(String email, RegistrationAccount registrationAccount) {
         Account account = new Account();
         account.setType(registrationAccount.getType());
         account.setAccountName(registrationAccount.getAccountName());
@@ -54,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
         account.setEmail(email);
         account.setStatus("ACTIVE");
 
-        accountRepository.saveAccount(account);
+        return account;
     }
 
     @Override
