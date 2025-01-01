@@ -19,19 +19,14 @@ resource "aws_dynamodb_table" "this" {
     }
   }
 
-  # Dynamically add attributes for GSIs
   dynamic "attribute" {
-    for_each = flatten([
-      for gsi in var.global_secondary_indexes : [
-        { name = gsi.hash_key, type = gsi.hash_key_type },
-          gsi.range_key != null ? { name = gsi.range_key, type = gsi.range_key_type } : null
-      ]
-    ])
+    for_each = local.final_attributes
     content {
       name = attribute.value.name
       type = attribute.value.type
     }
   }
+
   # Global Secondary Indexes (GSIs)
   dynamic "global_secondary_index" {
     for_each = var.global_secondary_indexes
