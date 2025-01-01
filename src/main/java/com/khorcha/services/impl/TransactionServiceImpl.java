@@ -8,8 +8,12 @@ import com.khorcha.services.AccountService;
 import com.khorcha.services.TransactionService;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -37,6 +41,20 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction.getId();
     }
 
+    @Override
+    public List<Transaction> getAllTransactions(String email, String account, DateTime startDate, DateTime endDate) {
+        String id = getId(email, account);
+        log.info("Fetching all transactions for id {} between {} and {}",id,startDate,endDate);
+        return transactionRepository.getAllTransactionsBetweenDates(id,startDate, endDate);
+    }
+
+    @Override
+    public List<Transaction> getTransactions(String email, String account, String transactionType, DateTime startDate, DateTime endDate) {
+        String id = getId(email, account);
+        log.info("Fetching {} transactions for id {} between {} and {}",transactionType,id,startDate,endDate);
+        return transactionRepository.getTransactionsBetweenDates(id, transactionType, startDate, endDate);
+    }
+
     private Transaction getTransactionFromTransactionRequest(String email, String account, TransactionRequest transactionRequest) {
         Transaction transaction = new Transaction();
         transaction.setTransactionType(transactionRequest.getTransactionType());
@@ -45,9 +63,13 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setDescription(transactionRequest.getDescription());
         transaction.setEmail(email);
         transaction.setAccount(account);
-        String id = email + "-" + account;
+        String id = getId(email,account);
         transaction.setId(id);
         return transaction;
+    }
+
+    private String getId(String email, String account){
+        return email + "-" + account;
     }
 
     private void updateBalanceForTransaction(Transaction transaction, Account account) {
@@ -61,5 +83,6 @@ public class TransactionServiceImpl implements TransactionService {
         account.setCurrentBalance(updatedBalance);
         this.accountService.updateAccount(account);
     }
+
 
 }
