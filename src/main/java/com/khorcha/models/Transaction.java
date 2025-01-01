@@ -7,6 +7,8 @@ import lombok.Data;
 import org.joda.time.DateTime;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 import java.math.BigDecimal;
 
@@ -27,4 +29,10 @@ public class Transaction {
     public String getId() {
         return this.id;
     }
+
+    @DynamoDbSortKey
+    public DateTime getTime() { return this.time; }
+
+    @DynamoDbSecondaryPartitionKey(indexNames = "transactionType")
+    public TransactionType getTransactionType() { return this.transactionType; }
 }

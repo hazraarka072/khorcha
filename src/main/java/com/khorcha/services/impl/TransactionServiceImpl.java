@@ -40,7 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setDescription(transactionRequest.getDescription());
         transaction.setEmail(email);
         transaction.setAccount(account);
-        String id = email + "-" + account + "-" + transactionRequest.getTime();
+        String id = email + "-" + account;
         transaction.setId(id);
         return transaction;
     }
