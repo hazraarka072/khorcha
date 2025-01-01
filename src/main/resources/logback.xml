@@ -8,4 +8,9 @@
     <root level="INFO">
         <appender-ref ref="Console" />
     </root>
+
+    <logger name="io.micronaut.security" level="DEBUG"/>
+
+    <logger name="io.micronaut.security.authentication" level="DEBUG"/>
+
 </configuration>

@@ -6,9 +6,14 @@ import com.khorcha.models.Transaction;
 import com.khorcha.repository.TransactionRepository;
 import com.khorcha.services.AccountService;
 import com.khorcha.services.TransactionService;
+import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
+
 import java.math.BigDecimal;
 import java.util.Optional;
 
+@Singleton
+@Slf4j
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -28,7 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = getTransactionFromTransactionRequest(email, accountName, transactionRequest);
         transactionRepository.addTransaction(transaction);
         updateBalanceForTransaction(transaction, account.get());
-
+        log.info("Added transaction for user {}, account {} on {}", email, accountName, transaction.getTime());
         return transaction.getId();
     }
 

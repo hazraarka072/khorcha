@@ -22,8 +22,8 @@ public class TransactionController {
     @Put
     public HttpResponse<String> addTransaction(@PathVariable String email, @PathVariable String account, @Body TransactionRequest transactionRequest){
         try {
-            int id = transactionService.addTransaction(email, account, transactionRequest);
-            return HttpResponse.ok(String.format("Transaction %d added successfully.", id));
+            String id = transactionService.addTransaction(email, account, transactionRequest);
+            return HttpResponse.ok(String.format("Transaction %s added successfully.", id));
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }

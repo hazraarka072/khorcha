@@ -1,6 +1,5 @@
 package com.khorcha.security;
 
-import com.khorcha.utils.ThreadLocalContext;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -11,11 +10,12 @@ import io.micronaut.http.filter.ServerFilterChain;
 import io.micronaut.http.filter.ServerFilterPhase;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 
 import java.util.Optional;
 
-
+@Slf4j
 @Filter(Filter.MATCH_ALL_PATTERN)
 public class EmailMatchingFilter implements HttpServerFilter {
     private final SecurityService securityService;
@@ -35,6 +35,8 @@ public class EmailMatchingFilter implements HttpServerFilter {
         Authentication authentication = authOpt.get();
         String jwtEmail = (String) authentication.getAttributes().get("email");
         String pathEmail = getEmailFromRequest(request);
+
+        log.info("Received request for email {} with jwt email {}", pathEmail, jwtEmail);
 
         if (!pathEmail.equalsIgnoreCase(jwtEmail))
             return Publishers.just(HttpResponse.unauthorized());

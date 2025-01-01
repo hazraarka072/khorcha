@@ -3,7 +3,6 @@ import com.khorcha.dto.BalanceResponse;
 import com.khorcha.models.Account;
 import com.khorcha.dto.RegistrationAccount;
 import com.khorcha.services.AccountService;
-import com.khorcha.utils.ThreadLocalContext;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
@@ -30,7 +29,7 @@ public class AccountController {
     public HttpResponse<String> registerAccount(@PathVariable String email, @Body RegistrationAccount registrationAccount) {
         try {
             accountService.registerAccount(email, registrationAccount);
-            return HttpResponse.ok("Account registered successfully for " + ThreadLocalContext.getValue("email"));
+            return HttpResponse.ok("Account registered successfully for " + email);
         } catch (IllegalArgumentException e) {
             return HttpResponse.badRequest(e.getMessage());
         }
@@ -46,13 +45,13 @@ public class AccountController {
         }
     }
 
-    @Get("/balance")
+    @Get("/all/balance")
     public HttpResponse<BalanceResponse> getBalance(@PathVariable String email) {
         BigDecimal accBal = accountService.getAllAccountBalance(email);
         return HttpResponse.ok(new BalanceResponse(accBal));
     }
 
-    @Get("/details")
+    @Get
     public HttpResponse<List<Account>> getDetails(@PathVariable String email, @Nullable @QueryValue String accountName) {
         if (accountName == null) {
             return HttpResponse.ok(accountService.getAllAccounts(email));

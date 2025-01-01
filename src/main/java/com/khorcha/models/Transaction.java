@@ -1,14 +1,12 @@
 package com.khorcha.models;
 
 import com.khorcha.constants.TransactionType;
+import com.khorcha.utils.JodaDateTimeConverter;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Data;
 import org.joda.time.DateTime;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 
 import java.math.BigDecimal;
 
@@ -30,6 +28,7 @@ public class Transaction {
         return this.id;
     }
 
+    @DynamoDbConvertedBy(JodaDateTimeConverter.class)
     @DynamoDbSortKey
     public DateTime getTime() { return this.time; }
 

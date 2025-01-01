@@ -61,7 +61,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 .sortValue(accountName)
                 .build();
 
-        Account account = accountTable.getItem(r -> r.key(key));
+        Account account = accountTable.getItem(key);
 
         return Optional.ofNullable(account);
     }

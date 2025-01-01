@@ -33,6 +33,7 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-annotations")
     implementation("io.micronaut:micronaut-http-client")
+    implementation("org.slf4j:slf4j-api")
 }
 
 application {
