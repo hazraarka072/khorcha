@@ -2,4 +2,5 @@
 .idea
 build
 .env
-**/.env
+frontend/khorcha/.env
+**/node_modules

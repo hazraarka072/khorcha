@@ -26,12 +26,8 @@ export class ApiClient {
 
   public async get<T>(endpoint: string): Promise<T> {
     const headers = await this.getHeaders();
-    headers.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       method: 'GET',
-      mode: 'no-cors',
       headers,
     });
 

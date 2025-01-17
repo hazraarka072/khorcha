@@ -1,5 +1,6 @@
 import { User } from 'oidc-client-ts';
 import { authService } from './AuthService';
+import { jwtDecode } from "jwt-decode";
 
 export class TokenService {
   public static async getAccessToken(): Promise<string | null> {
@@ -17,4 +18,10 @@ export class TokenService {
     if (!user) return false;
     return !user.expired;
   }
+
+  public static async getEmail(): Promise<Headers> {
+        const idToken = await TokenService.getIdToken();
+        const decodedToken = jwtDecode(idToken);
+        return decodedToken?.email || null;
+    }
 }
